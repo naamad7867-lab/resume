@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naama Danoch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:   #FFFFFF;
+      --bg:      #F9F8F6;
+      --bg-alt:  #F2F6F4;
+      --bg-soft: #FDF5F2;
+      --accent:  #D05C42;
+      --accent2: #5B8F7A;
+      --text:    #1B1917;
+      --muted:   #6E6760;
+      --light:   #ADA8A3;
+      --border:  rgba(27,25,23,0.07);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--white);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3.5rem;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s ease;
+    }
+
+    nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.05); }
+
+    .nav-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 500;
+      letter-spacing: 0.03em;
+      opacity: 0; transform: translateY(-4px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .nav-name.show { opacity: 1; transform: translateY(0); }
+
+    .nav-links { display: flex; gap: 2.25rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.2s ease;
+      position: relative; padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--accent);
+      transition: width 0.25s ease;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+    /* ── SHARED ──────────────────────────────── */
+    .wrap {
+      max-width: 900px; margin: 0 auto; padding: 0 3.5rem;
+    }
+
+    section { padding: 110px 0 90px; }
+
+    .label {
+      font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.1rem;
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .label::before {
+      content: ''; display: inline-block;
+      width: 20px; height: 1px; background: var(--accent);
+    }
+
+    .heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 5vw, 3.8rem);
+      font-weight: 400; line-height: 1.08;
+      letter-spacing: -0.015em; margin-bottom: 2.8rem;
+    }
+
+    /* ── HERO ────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      background: var(--white);
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+    }
+
+    /* soft background blobs */
+    #hero::before {
+      content: '';
+      position: absolute; top: -180px; right: -180px;
+      width: 520px; height: 520px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(208,92,66,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; bottom: -80px; left: -120px;
+      width: 380px; height: 380px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(91,143,122,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner { padding-top: 60px; }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 2rem;
+    }
+    .hero-tag-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); opacity: 0.5;
+    }
+
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4.5rem, 10vw, 8.5rem);
+      font-weight: 600; line-height: 1.0;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 2.2rem;
+    }
+    .hero-name em {
+      font-style: italic;
+      font-weight: 300;
+      text-transform: none;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      display: block;
+      font-size: 1.15em;
+    }
+
+    .hero-sub {
+      font-size: 1rem; font-weight: 300;
+      color: var(--muted); max-width: 480px;
+      line-height: 1.75; margin-bottom: 3rem;
+    }
+
+    .hero-contacts {
+      display: flex; flex-wrap: wrap; gap: 0.5rem 1.8rem;
+      align-items: center;
+    }
+    .hero-contacts a, .hero-contacts span {
+      font-size: 0.83rem; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .hero-contacts a:hover { color: var(--accent); }
+    .sep { color: var(--border); font-size: 1rem; user-select: none; }
+
+    .scroll-cue {
+      position: absolute; bottom: 2.2rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--light);
+      animation: cue 2.4s ease-in-out infinite;
+    }
+    .scroll-cue svg { width: 14px; height: 14px; stroke: var(--light); fill: none; stroke-width: 1.5; }
+    @keyframes cue {
+      0%,100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+      50%      { transform: translateX(-50%) translateY(7px); opacity: 1; }
+    }
+
+    /* ── ABOUT ───────────────────────────────── */
+    #about { background: var(--bg-soft); }
+
+    .about-body {
+      font-size: 1.08rem; font-weight: 300;
+      line-height: 1.9; color: var(--text);
+      max-width: 680px;
+    }
+    .about-body strong { font-weight: 500; }
+
+    /* ── EXPERIENCE ──────────────────────────── */
+    #experience { background: var(--bg-alt); }
+
+    .timeline { display: flex; flex-direction: column; gap: 3.5rem; }
+
+    .job { display: grid; grid-template-columns: 180px 1fr; gap: 0 2.5rem; }
+
+    .job-aside { padding-top: 4px; }
+
+    .job-dates {
+      font-size: 0.78rem; font-weight: 400; color: var(--light);
+      letter-spacing: 0.04em; line-height: 1.5;
+    }
+    .job-company {
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--accent2); margin-top: 0.3rem;
+      letter-spacing: 0.02em;
+    }
+    .job-loc {
+      font-size: 0.75rem; color: var(--light); margin-top: 0.2rem;
+    }
+
+    .job-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem; font-weight: 500;
+      line-height: 1.2; margin-bottom: 1rem;
+    }
+
+    .job-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+    .job-bullets li {
+      font-size: 0.88rem; font-weight: 300;
+      color: var(--muted); line-height: 1.7;
+      padding-left: 1.1rem; position: relative;
+    }
+    .job-bullets li::before {
+      content: '';
+      position: absolute; left: 0; top: 0.55em;
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--accent2); opacity: 0.6;
+    }
+
+    /* ── EDUCATION ───────────────────────────── */
+    #education { background: var(--white); padding: 90px 0; }
+
+    .edu-block { display: grid; grid-template-columns: 180px 1fr; gap: 0 2.5rem; }
+
+    .edu-year {
+      padding-top: 6px;
+      font-size: 0.78rem; color: var(--light); letter-spacing: 0.04em;
+    }
+
+    .edu-degree {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 500; line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .edu-school { font-size: 0.85rem; color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+    /* ── SKILLS ──────────────────────────────── */
+    #skills { background: var(--bg); }
+
+    .skills-cloud {
+      display: flex; flex-wrap: wrap; gap: 0.55rem;
+      margin-bottom: 3rem;
+    }
+    .tag {
+      font-size: 0.8rem; font-weight: 400; letter-spacing: 0.02em;
+      padding: 0.35rem 0.95rem; border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--white); color: var(--muted);
+      transition: all 0.22s ease; cursor: default;
+    }
+    .tag:hover {
+      background: var(--accent); color: var(--white);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 18px rgba(208,92,66,0.2);
+    }
+
+    .languages {
+      display: flex; gap: 3rem;
+      padding-top: 2rem; border-top: 1px solid var(--border);
+    }
+    .lang { display: flex; flex-direction: column; gap: 0.2rem; }
+    .lang-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 500;
+    }
+    .lang-lvl {
+      font-size: 0.7rem; font-weight: 400; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--light);
+    }
+
+    /* ── CONTACT ─────────────────────────────── */
+    #contact {
+      background: var(--text);
+      padding: 90px 0; min-height: auto;
+    }
+
+    #contact .label { color: rgba(255,255,255,0.35); }
+    #contact .label::before { background: rgba(255,255,255,0.25); }
+
+    .contact-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 300; color: var(--white);
+      margin-bottom: 2.2rem; line-height: 1.15;
+    }
+
+    .contact-row { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+
+    .contact-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.82rem; font-weight: 400; letter-spacing: 0.04em;
+      padding: 0.55rem 1.4rem; border-radius: 100px;
+      text-decoration: none; transition: all 0.22s ease;
+    }
+    .contact-btn.fill {
+      background: var(--accent); color: var(--white);
+    }
+    .contact-btn.fill:hover {
+      background: #be5239;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(208,92,66,0.4);
+    }
+    .contact-btn.ghost {
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.6);
+    }
+    .contact-btn.ghost:hover {
+      border-color: rgba(255,255,255,0.4);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    /* ── REVEAL ANIMATIONS ───────────────────── */
+    .r {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .r.on { opacity: 1; transform: translateY(0); }
+    .r.d1 { transition-delay: 0.08s; }
+    .r.d2 { transition-delay: 0.16s; }
+    .r.d3 { transition-delay: 0.24s; }
+    .r.d4 { transition-delay: 0.32s; }
+    .r.d5 { transition-delay: 0.40s; }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 700px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      .wrap { padding: 0 1.5rem; }
+      .job { grid-template-columns: 1fr; gap: 0.4rem; }
+      .job-aside { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: baseline; padding-top: 0; margin-bottom: 0.8rem; }
+      .edu-block { grid-template-columns: 1fr; gap: 0.4rem; }
+      .edu-year { margin-bottom: 0.5rem; }
+      section { padding: 80px 0 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <span class="nav-name" id="navName">Naama Danoch</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-tag r">
+      <span class="hero-tag-dot"></span>
+      Business Analyst &amp; Knowledge Specialist
+    </div>
+    <h1 class="hero-name r d1">Naama<br><em>Danoch</em></h1>
+    <p class="hero-sub r d2">
+      Turning complex, fragmented systems into clear,
+      structured knowledge — through documentation,
+      workflow design, and cross-functional collaboration.
+    </p>
+    <div class="hero-contacts r d3">
+      <a href="tel:0503711332">050-3711332</a>
+      <span class="sep">·</span>
+      <a href="mailto:naamad7867@gmail.com">naamad7867@gmail.com</a>
+      <span class="sep">·</span>
+      <span>Kiryat Ono, Tel Aviv</span>
+      <span class="sep">·</span>
+      <a href="https://linkedin.com/in/naama-da" target="_blank">LinkedIn ↗</a>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Scroll
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <p class="label r">Profile</p>
+    <h2 class="heading r d1">About Me</h2>
+    <p class="about-body r d2">
+      Naama specializes in converting <strong>disorganized technical systems</strong>
+      into manageable knowledge resources. Her approach emphasizes
+      <strong>documentation quality, workflow optimization,</strong> and enabling teams
+      to make evidence-based decisions through structured information systems.
+    </p>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="wrap">
+    <p class="label r">Career</p>
+    <h2 class="heading r d1">Experience</h2>
+    <div class="timeline">
+
+      <div class="job r d2">
+        <div class="job-aside">
+          <div class="job-dates">Mar 2024 – Feb 2026</div>
+          <div class="job-company">Sapiens</div>
+          <div class="job-loc">Holon</div>
+        </div>
+        <div>
+          <div class="job-title">Business Analyst</div>
+          <ul class="job-bullets">
+            <li>Developed and managed functional documentation including API specifications and integration designs for global teams</li>
+            <li>Created onboarding guides and institutional knowledge preservation materials</li>
+            <li>Maintained Confluence repositories for integration logic and business rules across multiple initiatives</li>
+            <li>Facilitated cross-functional issue analysis and converted findings into reusable documentation</li>
+            <li>Translated technical and business requirements into clear specifications for diverse stakeholders</li>
+            <li>Performed SQL queries for data validation across distributed systems</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job r d3">
+        <div class="job-aside">
+          <div class="job-dates">Nov 2021 – Aug 2023</div>
+          <div class="job-company">Bolt Development Center Ltd.</div>
+          <div class="job-loc">Petach Tikva</div>
+        </div>
+        <div>
+          <div class="job-title">Implementation Engineer</div>
+          <ul class="job-bullets">
+            <li>Built a custom workflow UI using a Chrome extension, consolidating multi-step processes into a unified dashboard</li>
+            <li>Rapidly learned complex undocumented systems — IBM ODM, XML/JSON integrations, and client-specific workflows</li>
+            <li>Mentored new team members by translating complex processes into accessible, structured knowledge</li>
+            <li>Analyzed production data using SQL, Tableau, and Splunk for operational insights</li>
+            <li>Created integration flow maps and process documentation for implementation teams</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="wrap">
+    <p class="label r">Academic</p>
+    <h2 class="heading r d1">Education</h2>
+    <div class="edu-block r d2">
+      <div class="edu-year">2016 – 2021</div>
+      <div>
+        <div class="edu-degree">B.Sc. Industrial Engineering<br>&amp; Management</div>
+        <div class="edu-school">Afeka College of Engineering<br>Information Systems major · Business Analytics focus</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="wrap">
+    <p class="label r">Expertise</p>
+    <h2 class="heading r d1">Skills</h2>
+    <div class="skills-cloud r d2">
+      <span class="tag">SQL</span>
+      <span class="tag">Confluence</span>
+      <span class="tag">Jira</span>
+      <span class="tag">Postman</span>
+      <span class="tag">Fiddler</span>
+      <span class="tag">Splunk</span>
+      <span class="tag">Tableau</span>
+      <span class="tag">IBM ODM</span>
+      <span class="tag">REST / SOAP APIs</span>
+      <span class="tag">XML / JSON</span>
+      <span class="tag">Chrome Extensions</span>
+      <span class="tag">Business Analysis</span>
+      <span class="tag">Technical Documentation</span>
+      <span class="tag">Knowledge Management</span>
+      <span class="tag">Process Optimization</span>
+      <span class="tag">Agile / Scrum</span>
+    </div>
+    <div class="languages r d3">
+      <div class="lang">
+        <span class="lang-name">Hebrew</span>
+        <span class="lang-lvl">Native</span>
+      </div>
+      <div class="lang">
+        <span class="lang-name">English</span>
+        <span class="lang-lvl">Fluent</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <p class="label r">Get in touch</p>
+    <h2 class="contact-heading r d1">Let's connect.</h2>
+    <div class="contact-row r d2">
+      <a href="mailto:naamad7867@gmail.com" class="contact-btn fill">naamad7867@gmail.com</a>
+      <a href="tel:0503711332" class="contact-btn ghost">050-3711332</a>
+      <a href="https://linkedin.com/in/naama-da" target="_blank" class="contact-btn ghost">LinkedIn ↗</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Scroll-triggered reveals
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.r').forEach(el => observer.observe(el));
+
+  // Hero items fire immediately
+  document.querySelectorAll('#hero .r').forEach((el, i) => {
+    setTimeout(() => el.classList.add('on'), 80 + i * 120);
+  });
+
+  // Nav name fades in after scrolling past hero
+  const hero = document.getElementById('hero');
+  const navName = document.getElementById('navName');
+  const nav = document.getElementById('mainNav');
+
+  new IntersectionObserver(([e]) => {
+    navName.classList.toggle('show', !e.isIntersecting);
+  }, { threshold: 0.15 }).observe(hero);
+
+  // Nav shadow on scroll
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  // Active nav link
+  const sections = [...document.querySelectorAll('section[id]')];
+  const links = [...document.querySelectorAll('.nav-links a')];
+
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${e.target.id}`));
+      }
+    });
+  }, { threshold: 0.45 }).observe(...sections) // observe each section
+  || sections.forEach(s =>
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting)
+          links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${e.target.id}`));
+      });
+    }, { threshold: 0.45 }).observe(s)
+  );
+</script>
+
+</body>
+</html>
